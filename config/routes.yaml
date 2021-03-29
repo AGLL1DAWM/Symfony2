@@ -6,3 +6,7 @@
 homepage:
   path: /hello/{name}
   controller: App\Controller\ConferenceController::index
+
+admin:
+  path: /admin
+  controller: App\Controller\Admin\DashboardController::index
