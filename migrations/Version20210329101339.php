@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210329085110 extends AbstractMigration
+final class Version20210329101339 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -21,13 +21,11 @@ final class Version20210329085110 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE comment ADD photo_filename VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE conference CHANGE is_international in_international TINYINT(1) NOT NULL');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE comment DROP photo_filename');
-        $this->addSql('ALTER TABLE conference CHANGE in_international is_international TINYINT(1) NOT NULL');
     }
 }
