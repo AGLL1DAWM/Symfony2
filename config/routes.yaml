@@ -4,9 +4,14 @@
 
 
 homepage:
-  path: /hello/{name}
+  path: /
   controller: App\Controller\ConferenceController::index
 
 admin:
   path: /admin
   controller: App\Controller\Admin\DashboardController::index
+
+conference:
+  path: /conference/{slug}
+  controller: App\Controller\ConferenceController::show
+  methods: GET
