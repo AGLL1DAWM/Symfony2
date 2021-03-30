@@ -7,13 +7,13 @@ use App\Entity\Comment;
 use App\Repository\CommentRepository;
 use App\Form\CommentFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Message\CommentMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Response;
-use App\SpamChecker;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-
 use App\Repository\ConferenceRepository;
 use Twig\Environment;
 
@@ -21,13 +21,15 @@ class ConferenceController extends AbstractController
 {
     private $twig;
     private $entityManager;
+    private $bus;
     private $conferenceRepository;
 
-    public function __construct(Environment $twig, EntityManagerInterface $entityManager)
+    public function __construct(Environment $twig, EntityManagerInterface $entityManager, MessageBusInterface $bus, ConferenceRepository $conferenceRepository)
     {
         $this->twig = $twig;
         $this->entityManager = $entityManager;
-
+        $this->bus = $bus;
+        $this->$conferenceRepository = $conferenceRepository;
     }
 
 
@@ -38,7 +40,7 @@ class ConferenceController extends AbstractController
         ]));
     }
 
-    public function show(Request $request, Conference $conference, ConferenceRepository $conferenceRepository , CommentRepository $commentRepository, SpamChecker $spamChecker, string $photoDir): Response
+    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir, string $conferenceRepository): Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
@@ -57,6 +59,7 @@ class ConferenceController extends AbstractController
             }
 
             $this->entityManager->persist($comment);
+            $this->entityManager->flush();
 
             $context = [
                     'user_ip' => $request->getClientIp(),
@@ -64,12 +67,8 @@ class ConferenceController extends AbstractController
                     'referrer' => $request->headers->get('referer'),
                     'permalink' => $request->getUri(),
                 ];
-                if (2 === $spamChecker->getSpamScore($comment, $context)) {
-                    throw new \RuntimeException('Blatant spam, go away!');
-                }
-
-            $this->entityManager->flush();
-
+              
+                $this->bus->dispatch(new CommentMessage($comment->getId(), $context));
             return $this->redirectToRoute('conference', ['slug' => $conference->getSlug()]);
         }
 
@@ -78,7 +77,7 @@ class ConferenceController extends AbstractController
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
         
         return new Response($this->twig->render('conference/show.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
+            'conferences' => $this->$conferenceRepository->findAll(),
             'conference' => $conference,
             'comments' => $paginator,
             'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
