@@ -29,18 +29,36 @@ class ConferenceController extends AbstractController
         $this->twig = $twig;
         $this->entityManager = $entityManager;
         $this->bus = $bus;
-        $this->$conferenceRepository = $conferenceRepository;
+        $this->conferenceRepository = $conferenceRepository;
     }
 
 
-    public function index(ConferenceRepository $conferenceRepository): Response
+    public function index(): Response
     {
-        return new Response($this->twig->render('conference/index.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
+        $response = new Response($this->twig->render('conference/index.html.twig', [
+            'conferences' => $this->conferenceRepository->findAll(),
         ]));
+
+        $response->setSharedMaxAge(3600);
+        
+        return $response;
+
     }
 
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir, string $conferenceRepository): Response
+
+    public function conferenceHeader(): Response
+    {
+        $response = new Response($this->twig->render('conference/header.html.twig', [
+            'conferences' => $this->conferenceRepository->findAll(),
+        ]));
+
+        $response->setSharedMaxAge(3600);
+
+        return $response;
+    }
+
+
+    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir): Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
@@ -77,7 +95,7 @@ class ConferenceController extends AbstractController
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
         
         return new Response($this->twig->render('conference/show.html.twig', [
-            'conferences' => $this->$conferenceRepository->findAll(),
+            'conferences' => $this->conferenceRepository->findAll(),
             'conference' => $conference,
             'comments' => $paginator,
             'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
