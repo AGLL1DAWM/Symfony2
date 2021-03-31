@@ -3,28 +3,28 @@
 #    controller: App\Controller\DefaultController::index
 
 homepage:
-  path: /
+  path: /{_locale<%app.supported_locales%>}
   controller: App\Controller\ConferenceController::index
 
 admin:
-  path: /admin
+  path: /admin/{_locale<%app.supported_locales%>}
   controller: App\Controller\Admin\DashboardController::index
 
 conference:
-  path: /conference/{slug}
+  path: /conference/{slug}/{_locale<%app.supported_locales%>}
   controller: App\Controller\ConferenceController::show
 
 review_comment:
-  path: /admin/comment/review/{id}
+  path: /admin/comment/review/{id}/{_locale<%app.supported_locales%>}}
   controller:  App\Controller\AdminController::reviewComment
 
 
 conference_header:
-  path: /conference_header
+  path: /conference_header/{_locale<%app.supported_locales%>}
   controller: App\Controller\ConferenceController::conferenceHeader
 
 
 purgeCache:
-  path: /admin/http-cache/{uri<.*>}
+  path: /admin/http-cache/{uri<.*>}/{_locale<%app.supported_locales%>}
   controller: App\Controller\AdminController::purgeHttpCache
   methods: PURGE
