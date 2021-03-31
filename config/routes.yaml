@@ -2,7 +2,6 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-
 homepage:
   path: /
   controller: App\Controller\ConferenceController::index
@@ -14,3 +13,18 @@ admin:
 conference:
   path: /conference/{slug}
   controller: App\Controller\ConferenceController::show
+
+review:
+  path: /admin/comment/review/{id}
+  controller:  App\Controller::reviewComment
+
+
+conference_header:
+  path: /conference_header
+  controller: App\Controller\ConferenceController::conferenceHeader
+
+
+purgeCache:
+  path: /admin/http-cache/{uri<.*>}
+  controller: App\Controller\AdminController::purgeHttpCache
+  methods: PURGE
