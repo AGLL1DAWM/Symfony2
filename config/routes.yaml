@@ -16,7 +16,7 @@ conference:
 
 review:
   path: /admin/comment/review/{id}
-  controller:  App\Controller::reviewComment
+  controller:  App\Controller\AdminController::reviewComment
 
 
 conference_header:
