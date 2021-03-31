@@ -14,7 +14,7 @@ conference:
   path: /conference/{slug}
   controller: App\Controller\ConferenceController::show
 
-review:
+review_comment:
   path: /admin/comment/review/{id}
   controller:  App\Controller\AdminController::reviewComment
 
