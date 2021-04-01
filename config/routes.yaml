@@ -28,3 +28,9 @@ purgeCache:
   path: /admin/http-cache/{uri<.*>}/{_locale<%app.supported_locales%>}
   controller: App\Controller\AdminController::purgeHttpCache
   methods: PURGE
+
+
+email:
+  path: /mail
+  controller: App\Controller\MailerController::sendEmail
+  
