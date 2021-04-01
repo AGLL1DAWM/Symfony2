@@ -14,3 +14,13 @@ services:
     image: schickling/mailcatcher
     ports: 
       - "1025:1080"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    depends_on:
+      - db
+
+  rabbitmq:
+      image: rabbitmq:3.7-management
+      ports: [5672, 15672]
